@@ -1,30 +1,82 @@
-# Swatchboard
+# Collage Maker
 
-Swatchboard is a SwiftUI iOS application for combining multiple photos into a single exportable canvas. It includes social-media-ready presets (Instagram posts and stories, Facebook covers, YouTube thumbnails, etc.) as well as a fully custom canvas size.
+A clean, minimalist React Native app for creating photo collages with grid layouts and freeform placement.
 
 ## Features
 
-- **Guided setup:** Start on a sizing screen with Instagram, Facebook, and YouTube-ready templates or specify an exact width and height before choosing your layout style.
-- **Split layouts:** Quickly divide the canvas into evenly sized slots (2–6 sections) and tap to swap images between slots.
-- **Freeform layouts:** Drag, resize, and rotate images anywhere on the canvas with live snapping that keeps them within bounds.
-- **Text overlays:** Drop modern, monochrome captions onto the collage, then adjust the copy, font, color, size, rotation, and placement.
-- **Background customization:** Set the canvas background color (including transparency) for any empty areas.
-- **Photo library integration:** Import images directly with the system photo picker and export the final image back to Photos.
+- **Canvas Size Selection**: Choose from platform presets (Instagram, X, YouTube, etc.) or create custom sizes
+- **Grid Layouts**: 20+ grid options from 1x2 to 5x5 layouts
+- **Freeform Mode**: Drag and position photos anywhere on the canvas
+- **Export**: Save collages to device gallery at specified resolution
+- **Clean Design**: Black, white, and grey color scheme with no gradients
 
 ## Getting Started
 
-1. Open the project folder in Xcode (`File` → `Open...` → select the `Swatchboard` directory).
-2. Ensure the deployment target is iOS 16 or later (required for `PhotosPicker`).
-3. Build and run the `Swatchboard` scheme on a simulator or device.
+### Prerequisites
+- Node.js (v16 or later)
+- Expo CLI (`npm install -g @expo/cli`)
+- Expo Go app on your phone (iOS/Android)
 
-When running for the first time, Xcode may prompt you to add the SwiftUI previews target; you can dismiss the preview if not needed. Grant the application access to the photo library when prompted to load images into the canvas.
+### Installation
 
-## Trying the project without a Mac
+1. Install dependencies:
+```bash
+npm install
+```
 
-This repository contains a native iOS application and therefore cannot be executed directly inside this Linux-based environment. If you do not currently have access to macOS or Xcode, you still have a few options for exploring the project:
+2. Start the development server:
+```bash
+npm start
+```
 
-- **Swift Playgrounds on iPad:** Import the contents of the `Swatchboard` directory into the Playgrounds app (version 4.2 or later). The UI will run with touch interaction, although the Photos picker and export features are unavailable on iPadOS Playgrounds.
-- **Hosted macOS services:** Providers such as [MacStadium](https://www.macstadium.com/), [MacInCloud](https://www.macincloud.com/), or [GitHub Codespaces with a macOS host](https://docs.github.com/en/codespaces) let you rent temporary macOS hardware with Xcode preinstalled.
-- **Ask a teammate with a Mac:** The generated Xcode project is self-contained. Anyone with Xcode 15 or newer can open the project and run it on a simulator or device without extra setup.
+3. Test on your device:
+   - **iOS**: Run `npm run ios` or scan QR code with Expo Go
+   - **Android**: Run `npm run android` or scan QR code with Expo Go
+   - **Web**: Run `npm run web`
 
-Regardless of the approach, you will need to sign in with an Apple ID that has access to the Photos library in order to exercise the import/export flows.
+## Usage
+
+1. **Select Canvas Size**: Choose from platform presets or enter custom dimensions
+2. **Choose Layout**: Pick a grid layout or select freeform mode
+3. **Add Photos**: Tap cells (grid mode) or use "Add Photo" button (freeform mode)
+4. **Edit Photos**: 
+   - Grid mode: Photos auto-fit to cells
+   - Freeform mode: Drag photos to reposition
+5. **Export**: Tap "Export" to save your collage to the gallery
+
+## Platform Presets
+
+- Instagram Post: 1080×1080
+- Instagram Story: 1080×1920
+- X Post: 1200×675
+- YouTube Thumbnail: 1280×720
+- YouTube Banner: 1920×1080
+- Facebook Post: 1200×1200
+
+## Grid Layouts
+
+Available layouts include: 1×2, 2×1, 1×3, 3×1, 2×2, 2×3, 3×2, 3×3, 2×4, 4×2, 2×5, 5×2, 3×4, 4×3, 4×4, 3×5, 5×3, 4×5, 5×4, 5×5, and Freeform.
+
+## Technical Details
+
+- Built with React Native and Expo
+- TypeScript for type safety
+- React Navigation for screen flow
+- PanResponder for gesture handling
+- Expo Image Picker for photo selection
+- Expo Media Library for saving to gallery
+- React Native View Shot for canvas export
+
+## Troubleshooting
+
+If you encounter the "WorkletsError" about version mismatch:
+1. Run `npx expo install --fix` to update dependencies
+2. Clear cache with `npx expo start --clear`
+3. Restart the development server
+
+The app has been simplified to use PanResponder instead of React Native Reanimated to avoid worklets issues.
+
+## Support
+
+- Support URL: https://github.com/Jordan-Ryan/Swatchboard/issues
+- Privacy Policy: See [docs/privacy.md](docs/privacy.md)
