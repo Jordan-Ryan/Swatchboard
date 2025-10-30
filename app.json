@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Collage Maker",
+    "name": "SwatchBoard",
     "slug": "collage-maker",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -14,13 +14,12 @@
       "backgroundColor": "#000000"
     },
     "ios": {
-      "supportsTablet": false,
+      "supportsTablet": true,
       "bundleIdentifier": "com.jordanryan.collagemaker",
       "infoPlist": {
         "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to create collages.",
         "NSPhotoLibraryAddUsageDescription": "This app needs permission to save collages to your photo library.",
-        "ITSAppUsesNonExemptEncryption": false,
-        "UIRequiresFullScreen": true
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
