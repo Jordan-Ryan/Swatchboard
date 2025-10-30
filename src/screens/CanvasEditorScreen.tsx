@@ -49,35 +49,6 @@ const CanvasEditorScreen: React.FC<Props> = ({ navigation, route }) => {
     canvasWidth = canvasHeight * canvasAspectRatio;
   }
 
-  const handleAddPhoto = async () => {
-    const photo = await pickImageFromGallery();
-    if (photo) {
-      if (!layout) {
-        return;
-      }
-
-      const totalCells = layout.rows * layout.cols;
-      const occupied = new Set(photos.map(p => p.cellIndex));
-      let targetIndex = 0;
-      while (occupied.has(targetIndex) && targetIndex < totalCells) {
-        targetIndex += 1;
-      }
-
-      if (targetIndex >= totalCells) {
-        Alert.alert('Layout Full', 'All cells in this layout already have photos.');
-        return;
-      }
-
-      const newPhoto = {
-        ...photo,
-        cellIndex: targetIndex,
-      };
-      setPhotos([...photos, newPhoto]);
-      setActiveGridIndex(targetIndex);
-      setSelectedPhotoId(newPhoto.id);
-    }
-  };
-
   const handleCellPress = async (cellIndex: number) => {
     setActiveGridIndex(cellIndex);
     const existingPhoto = photos.find(p => p.cellIndex === cellIndex);
@@ -137,6 +108,15 @@ const CanvasEditorScreen: React.FC<Props> = ({ navigation, route }) => {
       setPhotos(photos.filter(p => p.id !== selectedPhotoId));
       setSelectedPhotoId(null);
     }
+  };
+
+  const handleClearPhotos = () => {
+    if (!photos.length) {
+      return;
+    }
+    setPhotos([]);
+    setSelectedPhotoId(null);
+    setActiveGridIndex(null);
   };
 
   const handleBackgroundColorChange = (color: string) => {
@@ -258,11 +238,12 @@ const CanvasEditorScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
 
       <ToolBar
-        onAddPhoto={handleAddPhoto}
         onDeletePhoto={handleDeletePhoto}
+        onClearPhotos={handleClearPhotos}
         onExport={handleExport}
         onBackgroundColorChange={handleBackgroundColorChange}
         hasSelectedPhoto={!!selectedPhotoId}
+        hasPhotos={photos.length > 0}
         canvasSize={`${canvasSize.width} × ${canvasSize.height}`}
       />
     </View>

@@ -1,0 +1,44 @@
+name: EAS iOS Build and Submit
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+
+jobs:
+  ios-build-submit:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: EAS iOS build and submit (production)
+        env:
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+          EAS_SKIP_AUTO_FINGERPRINT: '1'
+        run: |
+          eas build --platform ios --profile production --non-interactive --auto-submit
+
+

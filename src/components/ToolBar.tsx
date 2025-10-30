@@ -3,20 +3,22 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { COLORS } from '../constants/colors';
 
 interface ToolBarProps {
-  onAddPhoto: () => void;
   onDeletePhoto: () => void;
+  onClearPhotos: () => void;
   onExport: () => void;
   onBackgroundColorChange: (color: string) => void;
   hasSelectedPhoto: boolean;
+  hasPhotos: boolean;
   canvasSize: string;
 }
 
 const ToolBar: React.FC<ToolBarProps> = ({
-  onAddPhoto,
   onDeletePhoto,
+  onClearPhotos,
   onExport,
   onBackgroundColorChange,
   hasSelectedPhoto,
+  hasPhotos,
   canvasSize,
 }) => {
   const [showColorPicker, setShowColorPicker] = useState(false);
@@ -65,15 +67,21 @@ const ToolBar: React.FC<ToolBarProps> = ({
       )}
 
       <View style={styles.bottomBar}>
-        <TouchableOpacity style={styles.addButton} onPress={onAddPhoto}>
-          <Text style={styles.addButtonText}>Add Photo</Text>
+        <TouchableOpacity
+          style={[styles.clearButton, !hasPhotos && styles.disabledButton]}
+          onPress={onClearPhotos}
+          disabled={!hasPhotos}
+        >
+          <Text style={[styles.buttonText, !hasPhotos && styles.disabledText]}>
+            Clear
+          </Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity 
           style={styles.colorButton} 
           onPress={() => setShowColorPicker(!showColorPicker)}
         >
-          <Text style={styles.colorButtonText}>Background</Text>
+          <Text style={styles.buttonText}>Background</Text>
         </TouchableOpacity>
         
         <TouchableOpacity
@@ -81,7 +89,7 @@ const ToolBar: React.FC<ToolBarProps> = ({
           onPress={onDeletePhoto}
           disabled={!hasSelectedPhoto}
         >
-          <Text style={[styles.deleteButtonText, !hasSelectedPhoto && styles.disabledText]}>
+          <Text style={[styles.buttonText, !hasSelectedPhoto && styles.disabledText]}>
             Delete
           </Text>
         </TouchableOpacity>
@@ -138,21 +146,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.greyBorder,
   },
-  addButton: {
-    flex: 1,
-    backgroundColor: COLORS.greyDark,
-    paddingVertical: 12,
-    borderRadius: 6,
-    marginRight: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: COLORS.greyBorder,
-  },
-  addButtonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '500',
-  },
   colorButton: {
     flex: 1,
     backgroundColor: COLORS.greyDark,
@@ -163,10 +156,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.greyBorder,
   },
-  colorButtonText: {
-    color: COLORS.white,
-    fontSize: 16,
-    fontWeight: '500',
+  clearButton: {
+    flex: 1,
+    backgroundColor: COLORS.greyDark,
+    paddingVertical: 12,
+    borderRadius: 6,
+    marginRight: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.greyBorder,
   },
   deleteButton: {
     flex: 1,
@@ -177,14 +175,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.greyBorder,
   },
-  disabledButton: {
-    backgroundColor: COLORS.greyMedium,
-    borderColor: COLORS.greyLight,
-  },
-  deleteButtonText: {
+  buttonText: {
     color: COLORS.white,
     fontSize: 16,
     fontWeight: '500',
+  },
+  disabledButton: {
+    backgroundColor: COLORS.greyMedium,
+    borderColor: COLORS.greyLight,
   },
   disabledText: {
     color: COLORS.greyLight,
