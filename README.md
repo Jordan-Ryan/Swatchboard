@@ -1,82 +1,95 @@
-# Collage Maker
+# SwatchBoard
 
-A clean, minimalist React Native app for creating photo collages with grid layouts and freeform placement.
+Photo collage app. The Expo display name is SwatchBoard (`app.json`). The npm package name is `collage-maker`. The version string in `package.json` and `app.json` is `1.0.2`.
 
-## Features
+## What the app does
 
-- **Canvas Size Selection**: Choose from platform presets (Instagram, X, YouTube, etc.) or create custom sizes
-- **Grid Layouts**: 20+ grid options from 1x2 to 5x5 layouts
-- **Freeform Mode**: Drag and position photos anywhere on the canvas
-- **Export**: Save collages to device gallery at specified resolution
-- **Clean Design**: Black, white, and grey color scheme with no gradients
+- Choose a canvas size from the presets in `src/constants/presets.ts`, or enter a custom width and height. Custom values are parsed as integers and must be from 1 through 4000.
+- Choose a grid from `GRID_LAYOUTS` in that file. The selection screen can filter those layouts by cell count.
+- Tap an empty cell to pick a photo with `expo-image-picker`. The image uses `resizeMode="contain"`. A two-finger pinch scales it between 0.25 and 4. A one-finger drag moves it inside the cell. Releasing a drag over another cell swaps the photos (`src/components/GridCell.tsx`).
+- Change the canvas background from the swatches in `src/components/ToolBar.tsx`, delete the selected photo, or clear every photo.
+- Export captures a PNG at the selected canvas width and height (`src/utils/exportCanvas.ts`) and saves it with `expo-media-library`.
 
-## Getting Started
+### Canvas presets
 
-### Prerequisites
-- Node.js (v16 or later)
-- Expo CLI (`npm install -g @expo/cli`)
-- Expo Go app on your phone (iOS/Android)
+| Name | Pixels |
+| --- | --- |
+| Instagram Post | 1080×1080 |
+| Instagram Story | 1080×1920 |
+| X Post | 1200×675 |
+| YouTube Thumbnail | 1280×720 |
+| YouTube Banner | 1920×1080 |
+| Facebook Post | 1200×1200 |
 
-### Installation
+### Grid layouts
 
-1. Install dependencies:
+Rows × columns, from `src/constants/presets.ts`: 1×2, 2×1, 1×3, 3×1, 1×4, 4×1, 2×2, 2×3, 3×2, 3×3, 2×4, 4×2, 2×5, 5×2.
+
+## Requirements
+
+- Node.js `>= 20.19.4`. That range is the `engines` field of locked `react-native@0.81.5` in `package-lock.json`. `package.json` has no `engines` field. The iOS workflow requests Node 20.
+- npm. `package-lock.json` is the lockfile `npm ci` uses.
+- A Mac with Xcode for `npm run ios` (`expo run:ios`).
+- An Android SDK for `npm run android` (`expo run:android`).
+- EAS CLI `>= 12.0.0` for the release scripts and the GitHub workflow (`eas.json`). The workflow installs it with `npm install -g eas-cli`.
+
+## Setup
+
 ```bash
-npm install
+npm ci
 ```
 
-2. Start the development server:
+## Run
+
 ```bash
 npm start
+npm run ios
+npm run android
+npm run web
 ```
 
-3. Test on your device:
-   - **iOS**: Run `npm run ios` or scan QR code with Expo Go
-   - **Android**: Run `npm run android` or scan QR code with Expo Go
-   - **Web**: Run `npm run web`
+| Script | Command |
+| --- | --- |
+| `start` | `expo start` |
+| `ios` | `expo run:ios` |
+| `android` | `expo run:android` |
+| `web` | `expo start --web` |
 
-## Usage
+The scripts in `package.json` are the four commands above. The app depends on `expo-dev-client`. `npm run ios` and `npm run android` compile a native development build. Generated `ios/` and `android/` directories are gitignored.
 
-1. **Select Canvas Size**: Choose from platform presets or enter custom dimensions
-2. **Choose Layout**: Pick a grid layout or select freeform mode
-3. **Add Photos**: Tap cells (grid mode) or use "Add Photo" button (freeform mode)
-4. **Edit Photos**: 
-   - Grid mode: Photos auto-fit to cells
-   - Freeform mode: Drag photos to reposition
-5. **Export**: Tap "Export" to save your collage to the gallery
+## iOS build and submit
 
-## Platform Presets
+A push to `main` runs `.github/workflows/eas-ios-release.yml` unless the change is only `README.md` or files under `docs/`. The job uses `macos-latest`, Node 20, `npm ci`, a global `eas-cli` install, and:
 
-- Instagram Post: 1080×1080
-- Instagram Story: 1080×1920
-- X Post: 1200×675
-- YouTube Thumbnail: 1280×720
-- YouTube Banner: 1920×1080
-- Facebook Post: 1200×1200
+```bash
+eas build --platform ios --profile production --non-interactive --auto-submit
+```
 
-## Grid Layouts
+The job reads `EAS_TOKEN` from the `EAS_TOKEN` secret and sets `EAS_SKIP_AUTO_FINGERPRINT=1`.
 
-Available layouts include: 1×2, 2×1, 1×3, 3×1, 2×2, 2×3, 3×2, 3×3, 2×4, 4×2, 2×5, 5×2, 3×4, 4×3, 4×4, 3×5, 5×3, 4×5, 5×4, 5×5, and Freeform.
+`eas.json` sets `appVersionSource` to `remote`. The production build profile is iOS only, with `resourceClass` `m-medium` and `buildConfiguration` `Release`. The production submit profile uses App Store Connect app id `6754526332`.
 
-## Technical Details
+These shell scripts are separate from that workflow and wait for keyboard input:
 
-- Built with React Native and Expo
-- TypeScript for type safety
-- React Navigation for screen flow
-- PanResponder for gesture handling
-- Expo Image Picker for photo selection
-- Expo Media Library for saving to gallery
-- React Native View Shot for canvas export
+- `build-ios.sh` runs `eas project:init`, then `eas build --platform ios --profile production`.
+- `deploy-ios.sh` installs `eas-cli` when `eas` is missing, runs `eas login`, then the same production iOS build.
+- `submit-appstore.sh` runs `eas submit --platform ios`.
 
-## Troubleshooting
+From `app.json`: iOS bundle identifier and Android package are `com.jordanryan.collagemaker`. Expo `owner` is `jordanrtesting`. The EAS project id is `1738a900-6e48-452a-9541-0ee4b98dd3da`. `newArchEnabled` is `false`. iOS `supportsTablet` is `true`.
 
-If you encounter the "WorkletsError" about version mismatch:
-1. Run `npx expo install --fix` to update dependencies
-2. Clear cache with `npx expo start --clear`
-3. Restart the development server
+## Stack
 
-The app has been simplified to use PanResponder instead of React Native Reanimated to avoid worklets issues.
+- Expo `^54.0.20` (lockfile resolves `54.0.20`), React `19.1.0`, React Native `0.81.5`
+- TypeScript `~5.9.2`. `tsconfig.json` extends `expo/tsconfig.base` with `strict` set to `true`
+- `@react-navigation/native` and `@react-navigation/stack`
+- Screens in `App.tsx`: `CombinedSelection` (title `Create Collage`) and `CanvasEditor` (title `Editor`)
+- `expo-image-picker` and `expo-media-library` for picking and saving photos
+- `react-native-view-shot` for export (`captureRef`, PNG, quality `1`)
+- Cell gestures use `PanResponder` and `Animated`. `App.tsx` also imports `react-native-gesture-handler`
 
-## Support
+## Docs
 
-- Support URL: https://github.com/Jordan-Ryan/Swatchboard/issues
-- Privacy Policy: See [docs/privacy.md](docs/privacy.md)
+- [docs/privacy.md](docs/privacy.md)
+- [docs/support.md](docs/support.md)
+- [docs/STATE.md](docs/STATE.md)
+- Issues: https://github.com/Jordan-Ryan/Swatchboard/issues
